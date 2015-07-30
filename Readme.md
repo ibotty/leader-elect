@@ -36,3 +36,8 @@ prepended. E.g. for `master-elect my-service` it will look into
 
 Commandline arguments take preference over the specialised environment
 variables and those take preference over the general environment variables.
+
+## License
+
+master-elect is distributed under the terms of the GPL-3. See COPYING.
+If that might be a problem for you, contact me.
