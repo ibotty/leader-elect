@@ -7,6 +7,8 @@ of the running master. The master will periodically reset the ttl while
 other nodes will periodically check whether the key is still there and
 race to become master when that's not the case.
 
+The logic is inspired by kubernetes podmaster.
+
 ## Configuration
 
 Configuration is done using the command line arguments and environment
