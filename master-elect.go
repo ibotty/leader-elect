@@ -122,9 +122,9 @@ func (s *State) StopService() error {
 
 func (s *State) LockLoop() {
 	for {
-		master, err := s.AcquireOrRenewLock()
+		leader, err := s.AcquireOrRenewLock()
 		switch {
-		case master:
+		case leader:
 			if err != nil {
 				fmt.Println("Cannot start service. Releasing lock. ", err)
 				s.RemoveLock()
@@ -140,7 +140,7 @@ func (s *State) MonitorLoop() {
 	ch, errCh := s.systemd.SubscribeUnitsCustom(s.sleep, 0, func(a, b *dbus.UnitStatus) bool { return *a != *b }, func(u string) bool { return u != s.unit })
 
 	for {
-		// not master anymore. Don't monitor anymore.
+		// not leader anymore. Don't monitor anymore.
 		if !s.isMaster {
 			return
 		}
@@ -202,7 +202,7 @@ func SetupFlags(s *State) *flag.FlagSet {
 	fs.StringVar(&s.etcdCluster, "etcd-servers", "http://localhost:2379", "Comma-separated list of etcd servers to use")
 	fs.Uint64Var(&s.ttl, "ttl", 30, "time to live for the lock in seconds")
 	fs.DurationVar(&s.sleep, "sleep", 5*time.Second, "time between checking the lock in seconds")
-	fs.StringVar(&s.whoami, "whoami", hostname, "value to identify the master-elect instance")
+	fs.StringVar(&s.whoami, "whoami", hostname, "value to identify the leader-elect instance")
 	fs.StringVar(&s.unit, "unit", "", "Systemd unit to start/monitor")
 	fs.StringVar(&s.key, "key", "", "Etcd key to use for the lock")
 
@@ -228,7 +228,7 @@ func main() {
 		s.unit = s.identifier + ".service"
 	}
 	if s.key == "" {
-		s.key = "/master-elect.ibotty.net/" + s.identifier
+		s.key = "/leader-elect.ibotty.net/" + s.identifier
 	}
 
 	fmt.Println("Starting with config: ", s)

@@ -1,7 +1,7 @@
 GOPATH ?= /usr/share/gocode
 
-build: master-elect
+build: leader-elect
 
-master-elect: master-elect.go
-	go build master-elect.go
+leader-elect: leader-elect.go
+	go build leader-elect.go
 
